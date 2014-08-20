@@ -1,0 +1,22 @@
+{% extends 'summer/base.html' %}
+{% block title %} Add feed {% endblock %}
+
+{% block body_block %}
+<div class="container">
+    <h1>Add feed</h1>
+    <div class="form-group">
+        <form id="add_channel_form" method="post" action="{% url 'add_channel' %}">
+            {% csrf_token %}
+            {% for field in form.visible_fields %}
+            <p>
+                {{ field.label_tag }}<br>
+                {{ field }}
+                {{ field.errors }}
+            </p>
+            {% endfor %}
+            <input class="btn btn-primary" type="submit" value="Add Channel" name="submit" id="submit"/>
+        </form>
+    </div>
+
+    
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'summer/base.html' %}
+{% block title %} Index {% endblock %}
+
+{% block body_block %}
+<h1>RSS list</h1>
+
+<ul>
+    {% for ff in channels %}
+    <li>title: <b>{{ ff.title }}</b> <br>
+        link: <b>{{ ff.link }}</b> <br>
+        active: <b>{{ ff.active }}</b>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
