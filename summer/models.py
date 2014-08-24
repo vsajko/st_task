@@ -9,7 +9,7 @@ class Channel(models.Model):
     last_modified = models.DateTimeField(blank=True, null=True, editable=False)
 
     def __unicode__(self):
-        return self.title
+        return self.link
 
 
 class Items(models.Model):
@@ -21,7 +21,7 @@ class Items(models.Model):
         unique_together = ('channel', 'link')
 
     def __unicode__(self):
-        return self.guid
+        return self.link
 
 
 class Words(models.Model):
@@ -41,7 +41,7 @@ class WordsItems(models.Model):
         unique_together = ('words', 'items')
 
     def __unicode__(self):
-        return self.words.word + ' - ' + self.items.title
+        return self.words.word + ' - ' + self.items.link
 
 
 class WordsChannels(models.Model):
@@ -53,4 +53,4 @@ class WordsChannels(models.Model):
         unique_together = ('words', 'channels')
 
     def __unicode__(self):
-        return self.words.word + ' - ' + self.channels.title
+        return self.words.word + ' - ' + self.channels.link
