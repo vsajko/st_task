@@ -102,13 +102,15 @@ class Command(BaseCommand):
                 title_words = []
                 summary_words = []
                 content_words = []
-                if 'id' in entry:
-                    item_id = entry.id
+                if 'link' in entry and entry.link is not None:
+                    link = entry.link
                 else:
-                    item_id = self.make_hash(str(entry))
+                    self.stdout.write('no link for item')
+                    continue
 
                 item, created = Items.objects.get_or_create(channel=channel,
-                                                            guid=item_id)
+                                                            link=link)
+                # we will store words only for fresh items
                 if created:
                     if 'title' in entry:
                         title_words = self.get_words(entry.title)

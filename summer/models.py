@@ -2,10 +2,10 @@ from django.db import models
 
 
 class Channel(models.Model):
-    title = models.CharField(blank=True, null=True, editable=False)
-    link = models.CharField(unique=True)
+    title = models.CharField(max_length=1024, blank=True, null=True, editable=False)
+    link = models.CharField(max_length=1024, unique=True)
     active = models.BooleanField(default=True)
-    etag = models.CharField(blank=True, null=True, editable=False)
+    etag = models.CharField(max_length=255, blank=True, null=True, editable=False)
     last_modified = models.DateTimeField(blank=True, null=True, editable=False)
 
     def __unicode__(self):
@@ -14,19 +14,18 @@ class Channel(models.Model):
 
 class Items(models.Model):
     channel = models.ForeignKey(Channel)
-    guid = models.CharField(unique=True)
-    title = models.CharField(blank=True, null=True)
-    link = models.CharField(blank=True, null=True)
+    title = models.CharField(max_length=1024, blank=True, null=True)
+    link = models.CharField(max_length=1024, blank=True, null=True)
 
     class Meta:
-        unique_together = ('channel', 'guid')
+        unique_together = ('channel', 'link')
 
     def __unicode__(self):
         return self.guid
 
 
 class Words(models.Model):
-    word = models.CharField(unique=True)
+    word = models.CharField(max_length=128, unique=True)
     num = models.IntegerField(default=0)
 
     def __unicode__(self):
