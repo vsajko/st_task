@@ -5,10 +5,10 @@ import pytz
 import hashlib
 from optparse import make_option
 from django.core.management.base import BaseCommand, CommandError
+from django.db import transaction
 from summer.models import Channel, Items, Words, WordsChannels, WordsItems
 import feedparser
 from bs4 import BeautifulSoup
-from django.db import transaction
 
 word_min_len = 3
 
@@ -54,6 +54,9 @@ class Command(BaseCommand):
 
 
     def proc_channel(self, link):
+        """ reads feeds from db or from link param
+            obeys http headers unless forcefetch param used
+        """
         self.stdout.write("feed_url: %s" % link)
         channel, _ = Channel.objects.get_or_create(link=link)
 
@@ -96,12 +99,19 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def proc_feed(self, feed, channel):
+        """ reads items one by one
+            fresh items are sent to get_words for extraction
+            and save_words for storing in db
+        """
         # we will take words from title and summary
         if 'entries' in feed:
+            entry_counter = 0
+            new_entry_counter = 0
             for entry in feed.entries:
                 title_words = []
                 summary_words = []
                 content_words = []
+                entry_counter += 1
                 if 'link' in entry and entry.link is not None:
                     link = entry.link
                 else:
@@ -112,6 +122,7 @@ class Command(BaseCommand):
                                                             link=link)
                 # we will store words only for fresh items
                 if created:
+                    new_entry_counter += 1
                     if 'title' in entry:
                         title_words = self.get_words(entry.title)
                         item.title = entry.title
@@ -137,12 +148,17 @@ class Command(BaseCommand):
                     self.save_words(words, channel, item)
                     item.save()
                 else:
-                    self.stdout.write('no new entries')
-
+                    pass
         else:
-            self.stdout.write('no entries')
+            pass
+
+        self.stdout.write('total_entries: %s, new_entries: %s'
+                          % (entry_counter, new_entry_counter))
+
 
     def get_words(self, val):
+        """ extracts words from one piece of item
+        """
         # regex for all non word characters
         wre = re.compile(ur"[\W_0-9]+", re.UNICODE)
 
@@ -160,10 +176,10 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def save_words(self, words, channel, item):
-        # words_dict = {}
+        """ stores words in db and updates counters
+        """
+        self.stdout.write('saving: %s words' % len(words))
         for word in words:
-            # self.stdout.write("word:  %s" % word)
-            # words_dict['word']
             db_word, _ = Words.objects.get_or_create(word=word)
             db_word.num += 1
             db_word.save()

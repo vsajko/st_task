@@ -1,0 +1,53 @@
+{% extends 'summer/base.html' %}
+{% block title %} Index {% endblock %}
+
+{% block body_block %}
+<div class="container">
+    <h1>Words Top List</h1>
+    <p>{{ feedlink }}</p>
+    <select id="selectfeed">
+        <option value="">-- All --</option>
+        {% for feed in feeds %}
+        <option value="{{ feed.link }}" {% if feedlink == feed.link %} selected="selected" {% endif %}>{{ feed.title }}</option>
+        {% endfor %}
+    </select>
+
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Word</th>
+                <th>Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for it in words %}
+            <tr>
+                <td>{{ it.0 }}</td>
+                <td>{{ it.1 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if words.has_previous %}
+            <a href="?page={{ words.previous_page_number }}{% include "summer/other_params.html" %}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ words.number }} of {{ words.paginator.num_pages }}.
+            </span>
+
+            {% if words.has_next %}
+            <a href="?page={{ words.next_page_number }}{% include "summer/other_params.html" %}">next</a>
+            {% endif %}
+        </span>
+    </div>
+
+
+</div>
+{% endblock %}
+

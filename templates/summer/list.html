@@ -4,12 +4,24 @@
 {% block body_block %}
 <h1>RSS list</h1>
 
-<ul>
-    {% for ff in channels %}
-    <li>title: <b>{{ ff.title }}</b> <br>
-        link: <b>{{ ff.link }}</b> <br>
-        active: <b>{{ ff.active }}</b>
-    </li>
-    {% endfor %}
-</ul>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Link</th>
+            <th>Active</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ff in channels %}
+        <tr>
+            <td>{{ ff.title }}</td>
+            <td>{{ ff.link }}</td>
+            <td>
+                <button feedid="{{ ff.id }}" title="click to change status" class="change-feed-status btn btn-xs {% if ff.active %} btn-success {% else %} btn-default {% endif %}" type="button">{{ ff.active }}</button>
+            </td>
+            {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
+

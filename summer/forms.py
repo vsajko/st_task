@@ -10,3 +10,9 @@ class ChannelForm(forms.ModelForm):
     class Meta:
         model = Channel
 
+
+class WordsByFeed(forms.ModelForm):
+    link = forms.ChoiceField()
+
+    class Meta:
+        model = Channel
